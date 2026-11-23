@@ -47,6 +47,7 @@ describe("createDefaultDocsSyncConfig", () => {
     expect(defaults.detectors["action.input"].enabled).toBe(true);
     expect(defaults.detectors["package.exports"].enabled).toBe(false);
     expect(defaults.detectors["env.added"].enabled).toBe(false);
+    expect(defaults.detectors["cli.argv"].enabled).toBe(false);
     expect(defaults.detectors["cli.flag"].enabled).toBe(true);
     expect(DEFAULT_CODE_EXCLUDE).toContain("**/node_modules/**");
     expect(DEFAULT_CODE_EXCLUDE).toContain("**/*.test.*");

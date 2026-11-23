@@ -102,11 +102,14 @@ after the classic rules:
    default code excludes.
 4. **Detectors** — pure extractors per surface kind (`action.input`,
    `action.output`, `package.bin`, `package.exports`, `cli.flag`, `cli.command`,
-   `mcp.tool`, opt-in `env.added`) at base and head; **new** = head − base by
-   `(kind, name)`.
+   opt-in `cli.argv`, `mcp.tool`, opt-in `env.added`) at base and head; **new** =
+   head − base by `(kind, name)`.
 5. **Mention index** — tokenize in-scope docs once (via
-   `prepareDocumentationContent`) into inline code, fenced code, table cells,
-   headings, and prose; each new surface must appear in an allowed context.
+   `prepareDocumentationContent`) into inline code, bold (`**name**` /
+   `__name__`), fenced code, table cells, headings, and prose; each new surface
+   must appear in an allowed context. Common English names additionally require
+   a structured hit (inline code, table cell, bold, or fenced YAML/`with:` key),
+   not heading/prose alone.
 6. **Pairing rules** — configured `code`/`docs` globs; if code matched and no
    meaningful docs change → one finding per rule (per package when
    `perPackage`).

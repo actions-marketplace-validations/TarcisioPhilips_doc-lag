@@ -32,6 +32,7 @@ export const KIND_LABELS: Record<SurfaceKind, string> = {
   "package.exports": "package export",
   "cli.flag": "CLI flag",
   "cli.command": "CLI command",
+  "cli.argv": "CLI argv flag",
   "mcp.tool": "MCP tool",
   "env.added": "environment variable",
 };
@@ -42,15 +43,29 @@ export type MentionContext =
   | "fencedCode"
   | "tableCell"
   | "heading"
-  | "text";
+  | "text"
+  | "bold";
+
+/**
+ * Structured contexts that satisfy common-English surface names (when that
+ * gate is enabled) and count as intentional documentation hits.
+ * Includes bold (`**name**` / `__name__`) alongside code/table/YAML fences.
+ */
+export const STRUCTURED_MENTION_CONTEXTS: readonly MentionContext[] = [
+  "inlineCode",
+  "tableCell",
+  "fencedCode",
+  "bold",
+];
 
 export const DETECTOR_ALLOWED_CONTEXTS: Record<SurfaceKind, readonly MentionContext[]> = {
-  "cli.flag": ["inlineCode", "fencedCode", "tableCell", "heading", "text"],
-  "cli.command": ["inlineCode", "fencedCode", "tableCell", "heading"],
-  "action.input": ["inlineCode", "fencedCode", "tableCell", "heading"],
-  "action.output": ["inlineCode", "fencedCode", "tableCell", "heading"],
-  "package.bin": ["inlineCode", "fencedCode", "tableCell", "heading"],
+  "cli.flag": ["inlineCode", "fencedCode", "tableCell", "heading", "text", "bold"],
+  "cli.command": ["inlineCode", "fencedCode", "tableCell", "heading", "bold"],
+  "cli.argv": ["inlineCode", "fencedCode", "tableCell", "heading", "text", "bold"],
+  "action.input": ["inlineCode", "fencedCode", "tableCell", "heading", "bold"],
+  "action.output": ["inlineCode", "fencedCode", "tableCell", "heading", "bold"],
+  "package.bin": ["inlineCode", "fencedCode", "tableCell", "heading", "bold"],
   "package.exports": ["inlineCode", "fencedCode"],
-  "mcp.tool": ["inlineCode", "fencedCode", "tableCell", "heading"],
-  "env.added": ["inlineCode", "fencedCode", "tableCell", "heading", "text"],
+  "mcp.tool": ["inlineCode", "fencedCode", "tableCell", "heading", "bold"],
+  "env.added": ["inlineCode", "fencedCode", "tableCell", "heading", "text", "bold"],
 };

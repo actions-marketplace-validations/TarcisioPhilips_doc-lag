@@ -1,0 +1,252 @@
+{
+  "$comment": "Docs-sync validation cases. Synthetic entries have ground-truth expectedIds. Public PR entries are judged after replay.",
+  "synthetic": [
+    {
+      "id": "synth-cli-flag-undocumented",
+      "detector": "cli.flag",
+      "expectIds": ["docs.missing:cli.flag:--audit@src/cli.ts"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-cli-flag-documented",
+      "detector": "cli.flag",
+      "expectIds": [],
+      "expectAbsent": ["docs.missing:cli.flag:--audit@src/cli.ts"]
+    },
+    {
+      "id": "synth-cli-flag-hidden",
+      "detector": "cli.flag",
+      "expectIds": [],
+      "expectAbsent": ["docs.missing:cli.flag:--secret@src/cli.ts"]
+    },
+    {
+      "id": "synth-cli-command-undocumented",
+      "detector": "cli.command",
+      "expectIds": ["docs.missing:cli.command:publish@src/cli.ts"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-cli-flag-click-undocumented",
+      "detector": "cli.flag",
+      "expectIds": ["docs.missing:cli.flag:--region@cli.py"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-cli-flag-argparse-undocumented",
+      "detector": "cli.flag",
+      "expectIds": ["docs.missing:cli.flag:--timeout@cli.py"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-action-input-undocumented",
+      "detector": "action.input",
+      "expectIds": ["docs.missing:action.input:dry-run@action.yml"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-action-input-documented",
+      "detector": "action.input",
+      "expectIds": [],
+      "expectAbsent": ["docs.missing:action.input:dry-run@action.yml"]
+    },
+    {
+      "id": "synth-action-output-undocumented",
+      "detector": "action.output",
+      "expectIds": ["docs.missing:action.output:artifact-url@action.yml"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-package-bin-undocumented",
+      "detector": "package.bin",
+      "expectIds": ["docs.missing:package.bin:widget@package.json"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-mcp-tool-undocumented",
+      "detector": "mcp.tool",
+      "expectIds": ["docs.missing:mcp.tool:list_widgets@src/server.ts"],
+      "expectAbsent": []
+    },
+    {
+      "id": "synth-mcp-tool-documented",
+      "detector": "mcp.tool",
+      "expectIds": [],
+      "expectAbsent": ["docs.missing:mcp.tool:list_widgets@src/server.ts"]
+    },
+    {
+      "id": "synth-env-added-opt-in",
+      "detector": "env.added",
+      "expectIds": ["docs.missing:env.added:WIDGET_TOKEN@.env.example"],
+      "expectAbsent": [],
+      "docsSync": { "detectors": { "env.added": true } }
+    },
+    {
+      "id": "synth-env-added-default-off",
+      "detector": "env.added",
+      "expectIds": [],
+      "expectAbsent": ["docs.missing:env.added:WIDGET_TOKEN@.env.example"]
+    },
+    {
+      "id": "synth-rule-pairing-undocumented",
+      "detector": "rule",
+      "expectIds": ["docs.missing:rule:api-surface"],
+      "expectAbsent": [],
+      "docsSync": {
+        "rules": [
+          {
+            "name": "api-surface",
+            "code": ["src/api/**"],
+            "docs": ["docs/api.md"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "synth-rule-pairing-documented",
+      "detector": "rule",
+      "expectIds": [],
+      "expectAbsent": ["docs.missing:rule:api-surface"],
+      "docsSync": {
+        "rules": [
+          {
+            "name": "api-surface",
+            "code": ["src/api/**"],
+            "docs": ["docs/api.md"]
+          }
+        ]
+      }
+    }
+  ],
+  "public": [
+    {
+      "id": "public-doc-lag-14",
+      "repo": "TarcisioPhilips/doc-lag",
+      "pr": 14,
+      "url": "https://github.com/TarcisioPhilips/doc-lag/pull/14",
+      "base": "f72de386dc8c7e9d0cd97db9330444ab0680f110",
+      "head": "cb4ae40679bffbd34393e9f7051e85b852805733",
+      "surfaceFocus": ["cli.flag", "action.input", "mcp.tool"],
+      "notes": "Added --config/--docs-include/--docs-exclude and Action/MCP params; README documented them."
+    },
+    {
+      "id": "public-actions-checkout-1369",
+      "repo": "actions/checkout",
+      "pr": 1369,
+      "url": "https://github.com/actions/checkout/pull/1369",
+      "base": "f095bcc56b7c2baf48f3ac70d6d6782f4f553222",
+      "head": "25d6c12a40fe31e2e7ea716a2facc3bbae34a8a2",
+      "surfaceFocus": ["action.input"],
+      "notes": "Added sparse-checkout Action inputs."
+    },
+    {
+      "id": "public-softprops-gh-release-372",
+      "repo": "softprops/action-gh-release",
+      "pr": 372,
+      "url": "https://github.com/softprops/action-gh-release/pull/372",
+      "base": "1853d73993c8ca1b2c9c1a7fede39682d0ab5c2a",
+      "head": "bbcf90210effd3d2b4f77046211ae5227d7ee4db",
+      "surfaceFocus": ["action.input"],
+      "notes": "Added previous_tag input for generate_release_notes."
+    },
+    {
+      "id": "public-mcp-servers-5359",
+      "repo": "modelcontextprotocol/servers",
+      "pr": 5359,
+      "url": "https://github.com/modelcontextprotocol/servers/pull/5359",
+      "base": "446be484729fc6e8b1e0a00c60a3de5692366f5c",
+      "head": "be9d4b689c48ad02ae413647e211b7450f0e2da6",
+      "surfaceFocus": ["cli.flag", "mcp.tool"],
+      "notes": "Filesystem server --read-only mode."
+    },
+    {
+      "id": "public-pallets-click-1355",
+      "repo": "pallets/click",
+      "pr": 1355,
+      "url": "https://github.com/pallets/click/pull/1355",
+      "base": "ca75bab76829009cc9b0bcfa015f6987840598b6",
+      "head": "e389b5eeeee68baba1ba099188cfd919a9b318a5",
+      "surfaceFocus": ["cli.flag"],
+      "notes": "Library internals; expect low/no public-surface findings or library-noise FPs."
+    },
+    {
+      "id": "public-psf-black-3712",
+      "repo": "psf/black",
+      "pr": 3712,
+      "url": "https://github.com/psf/black/pull/3712",
+      "base": "a4032dce645b83e1faccc7274864869ddfe279fc",
+      "head": "e7dba9859034b4d098c606d57a1f7515dc07304b",
+      "surfaceFocus": ["cli.flag"],
+      "notes": "blackd click options; docs may already mention flags."
+    },
+    {
+      "id": "public-httpie-1343",
+      "repo": "httpie/cli",
+      "pr": 1343,
+      "url": "https://github.com/httpie/cli/pull/1343",
+      "base": "2a942d8a06c7618832767ff28c9d830daa19b3a0",
+      "head": "c5af0d1226a92ba80ccdcaaf8cb416cecbb0dafc",
+      "surfaceFocus": ["cli.flag"],
+      "notes": "Pager/manual behavior for --manual."
+    },
+    {
+      "id": "public-setup-uv-200",
+      "repo": "astral-sh/setup-uv",
+      "pr": 200,
+      "url": "https://github.com/astral-sh/setup-uv/pull/200",
+      "base": "2af22b5b2dcfc0729ee842c635f300f1fc5a9e9a",
+      "head": "9ff05c874950db4e8949c25d658d65d93daea25f",
+      "surfaceFocus": ["action.input"],
+      "notes": "Warn instead of fail for no-dependency-glob."
+    },
+    {
+      "id": "public-pnpm-action-setup-184",
+      "repo": "pnpm/action-setup",
+      "pr": 184,
+      "url": "https://github.com/pnpm/action-setup/pull/184",
+      "base": "41ff72655975bd51cab0327fa583b6e92b6d3061",
+      "head": "9f84365f81fa243da92ed284a6f87ce4dbe057a6",
+      "surfaceFocus": ["action.input"],
+      "notes": "Docs clarification for package_json_file (likely TN)."
+    },
+    {
+      "id": "public-docker-login-600",
+      "repo": "docker/login-action",
+      "pr": 600,
+      "url": "https://github.com/docker/login-action/pull/600",
+      "base": "343f7c4344506bcbf9b4de18042ae17996df046d",
+      "head": "eb1ca82ebd6f2efb2935cf54c961d6682e188ce2",
+      "surfaceFocus": ["action.input"],
+      "notes": "Docs bump of actions majors (expect 0 detector findings)."
+    },
+    {
+      "id": "public-upload-artifact-764",
+      "repo": "actions/upload-artifact",
+      "pr": 764,
+      "url": "https://github.com/actions/upload-artifact/pull/764",
+      "base": "589182c5a4cec8920b8c1bce3e2fab1c97a02296",
+      "head": "d5c7beebb0eee5c0b1cdec43bf2bc827ad7edab2",
+      "surfaceFocus": ["action.input"],
+      "notes": "Support direct file uploads."
+    },
+    {
+      "id": "public-setup-node-1374",
+      "repo": "actions/setup-node",
+      "pr": 1374,
+      "url": "https://github.com/actions/setup-node/pull/1374",
+      "base": "89d709d423dc495668cd762a18dd4a070611be3f",
+      "head": "eeb862795c9a229583ccc0f20430ed8d328db2e3",
+      "surfaceFocus": ["action.input"],
+      "notes": "Limit automatic caching to npm + docs."
+    },
+    {
+      "id": "public-github-script-363",
+      "repo": "actions/github-script",
+      "pr": 363,
+      "url": "https://github.com/actions/github-script/pull/363",
+      "base": "57c10d434ec3b7112b3635cd63771978bcfc50dc",
+      "head": "ea954ff83a8f419ea2290da1ae2e44ed5a26b800",
+      "surfaceFocus": ["action.input"],
+      "notes": "Changed default/description of existing debug input (no new surface)."
+    }
+  ]
+}

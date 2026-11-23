@@ -1,0 +1,39 @@
+{
+  "id": "public-pallets-click-1355",
+  "kind": "public",
+  "repo": "pallets/click",
+  "pr": 1355,
+  "url": "https://github.com/pallets/click/pull/1355",
+  "base": "ca75bab76829009cc9b0bcfa015f6987840598b6",
+  "head": "e389b5eeeee68baba1ba099188cfd919a9b318a5",
+  "surfaceFocus": [
+    "cli.flag"
+  ],
+  "notes": "Library internals; expect low/no public-surface findings or library-noise FPs.",
+  "crashed": false,
+  "exitCode": 0,
+  "elapsedMs": 140,
+  "docsSync": {
+    "status": "ran",
+    "enforced": false,
+    "effectiveBase": "ca75bab76829009cc9b0bcfa015f6987840598b6",
+    "detectors": [
+      "action.input",
+      "action.output",
+      "cli.command",
+      "cli.flag",
+      "mcp.tool",
+      "package.bin"
+    ],
+    "rulesEvaluated": 0,
+    "candidateFiles": 2,
+    "newSurfaces": 0,
+    "findings": 0,
+    "omitted": 0,
+    "warnings": []
+  },
+  "findings": [],
+  "findingIds": [],
+  "stderrTail": "",
+  "parseError": null
+}

@@ -1,0 +1,36 @@
+{
+  "id": "synth-action-input-documented",
+  "kind": "synthetic",
+  "detector": "action.input",
+  "crashed": false,
+  "exitCode": 0,
+  "elapsedMs": 106,
+  "docsSync": {
+    "status": "ran",
+    "enforced": false,
+    "effectiveBase": "8a0cbdd185003aa640db5374d69768c03c3331a7",
+    "detectors": [
+      "action.input",
+      "action.output",
+      "cli.command",
+      "cli.flag",
+      "mcp.tool",
+      "package.bin"
+    ],
+    "rulesEvaluated": 0,
+    "candidateFiles": 1,
+    "newSurfaces": 1,
+    "findings": 0,
+    "omitted": 0,
+    "warnings": []
+  },
+  "findingIds": [],
+  "score": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "expected": [],
+    "got": []
+  },
+  "stderrTail": ""
+}

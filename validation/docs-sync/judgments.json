@@ -1,0 +1,113 @@
+{
+  "$comment": "Manual judgments for public PR replays after inspecting diffs + docs at head. Synthetic cases are scored automatically against expectIds.",
+  "method": {
+    "tp": "Finding correctly flags a new public surface that docs do not meaningfully document",
+    "fp": "Finding fires but the surface is documented, internal, or not user-facing",
+    "fn": "A new public surface should have been flagged but was not",
+    "tn": "No finding, and none expected (docs updated, no new surface, or out of detector scope)"
+  },
+  "public": [
+    {
+      "id": "public-doc-lag-14",
+      "newSurfaces": 6,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "New CLI flags / Action inputs / MCP params were documented in README in the same PR."
+    },
+    {
+      "id": "public-actions-checkout-1369",
+      "newSurfaces": 2,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "sparse-checkout inputs added with README updates."
+    },
+    {
+      "id": "public-softprops-gh-release-372",
+      "newSurfaces": 1,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "previous_tag documented in README table/examples."
+    },
+    {
+      "id": "public-mcp-servers-5359",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "fn",
+      "detectorGap": "cli.flag",
+      "notes": "Adds hand-rolled `--read-only` argv parsing (not commander/argparse/click). Known v1 limitation."
+    },
+    {
+      "id": "public-pallets-click-1355",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Library internals; no new consumer-facing CLI surface in-repo."
+    },
+    {
+      "id": "public-psf-black-3712",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Default-value display change; no new click options detected as new surfaces."
+    },
+    {
+      "id": "public-httpie-1343",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Behavior change around existing --manual; no new argparse long flags."
+    },
+    {
+      "id": "public-setup-uv-200",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Warn-vs-fail behavior; no new Action inputs."
+    },
+    {
+      "id": "public-pnpm-action-setup-184",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Description-only edit to existing package_json_file input."
+    },
+    {
+      "id": "public-docker-login-600",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Docs bump only."
+    },
+    {
+      "id": "public-upload-artifact-764",
+      "newSurfaces": 1,
+      "findings": 0,
+      "judgment": "fn",
+      "detectorGap": "action.input",
+      "surface": "archive",
+      "notes": "New action input `archive` not documented as an input, but mention index matched prose about Zip archives in README. Short/common names collide with prose."
+    },
+    {
+      "id": "public-setup-node-1374",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Caching policy + docs; no new surfaces."
+    },
+    {
+      "id": "public-github-script-363",
+      "newSurfaces": 0,
+      "findings": 0,
+      "judgment": "tn",
+      "notes": "Existing debug input default/description change only."
+    }
+  ],
+  "totals": {
+    "publicCases": 13,
+    "tn": 11,
+    "tp": 0,
+    "fp": 0,
+    "fn": 2,
+    "crashes": 0
+  }
+}

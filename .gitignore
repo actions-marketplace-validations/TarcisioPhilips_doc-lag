@@ -7,3 +7,4 @@ coverage/
 .plans/
 docs/demo/.last-demo-repo
 docs/demo/.last-demo-bin
+validation/docs-sync/.cache/

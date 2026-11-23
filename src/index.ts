@@ -19,6 +19,10 @@ export {
   parseDocsSyncSection,
   resolveDocsSyncConfig,
 } from "./core/docs-sync-config.js";
+export {
+  COMMON_SURFACE_WORDS,
+  isCommonSurfaceWord,
+} from "./docs-sync/common-words.js";
 export type {
   ChangeKind,
   DetectorConfig,
@@ -78,7 +82,13 @@ export {
   REGISTERED_DETECTOR_KINDS,
   STRUCTURED_DETECTOR_KINDS,
 } from "./docs-sync/detectors/registry.js";
-export type { SurfaceDecl } from "./docs-sync/detectors/types.js";
+export type { SurfaceDecl, MentionContext } from "./docs-sync/detectors/types.js";
+export { STRUCTURED_MENTION_CONTEXTS } from "./docs-sync/detectors/types.js";
+export { extractBoldSpans } from "./docs-sync/mention-index.js";
+export {
+  CAT_FILE_CHUNK_BUDGET_BYTES,
+  CAT_FILE_MAX_OBJECT_BYTES,
+} from "./core/git-helpers.js";
 export type { RuleInfo } from "./mcp/rules.js";
 export type { McpHandlerContext } from "./mcp/handlers.js";
 export type { ScanWithRankingOptions } from "./core/scan-with-ranking.js";

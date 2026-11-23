@@ -2,6 +2,7 @@
   "$schema": "./schema/doc-lag.config.schema.json",
   "docsSync": {
     "enforce": false,
+    "ignore": ["validation/**"],
     "detectors": {
       "action.input": { "enabled": true, "docs": ["README.md"] },
       "action.output": { "enabled": true, "docs": ["README.md"] },

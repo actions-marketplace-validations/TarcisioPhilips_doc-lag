@@ -212,6 +212,53 @@ describe("catFileBatch / createCatFileBatch", () => {
     expect(git(fixture.repo, ["status", "--porcelain"])).toBe(beforeStatus);
     expect(git(fixture.repo, ["rev-parse", "HEAD"])).toBe(beforeIndex);
   });
+
+  it("chunks large batches without crashing (forces multi-chunk path)", () => {
+    const fixture = track(
+      createFixtureRepo({
+        baseFiles: {
+          "a.txt": "aaa\n",
+          "b.txt": "bbb\n",
+          "c.txt": "ccc\n",
+        },
+      }),
+    );
+    const objects = [
+      `${fixture.head}:a.txt`,
+      `${fixture.head}:b.txt`,
+      `${fixture.head}:c.txt`,
+    ];
+    // Budget of 4 bytes forces a separate chunk per file (each is 4 bytes).
+    const results = catFileBatch(fixture.repo, objects, {
+      catFileChunkBudgetBytes: 4,
+    });
+    expect(results.get(`${fixture.head}:a.txt`)?.toString("utf8")).toBe("aaa\n");
+    expect(results.get(`${fixture.head}:b.txt`)?.toString("utf8")).toBe("bbb\n");
+    expect(results.get(`${fixture.head}:c.txt`)?.toString("utf8")).toBe("ccc\n");
+  });
+
+  it("skips oversized objects with a deterministic warning instead of crashing", () => {
+    const big = "x".repeat(200);
+    const fixture = track(
+      createFixtureRepo({
+        baseFiles: { "small.txt": "ok\n", "big.txt": `${big}\n` },
+      }),
+    );
+    const warnings: string[] = [];
+    const results = catFileBatch(
+      fixture.repo,
+      [`${fixture.head}:small.txt`, `${fixture.head}:big.txt`],
+      {
+        catFileMaxObjectBytes: 50,
+        warn: (message) => warnings.push(message),
+      },
+    );
+    expect(results.get(`${fixture.head}:small.txt`)?.toString("utf8")).toBe("ok\n");
+    expect(results.get(`${fixture.head}:big.txt`)).toBeNull();
+    expect(warnings.some((w) => w.includes("big.txt") && w.includes("oversized"))).toBe(
+      true,
+    );
+  });
 });
 
 describe("findCommitTrailer", () => {

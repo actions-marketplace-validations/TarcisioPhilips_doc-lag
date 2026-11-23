@@ -77,6 +77,7 @@
             "package.exports": { "$ref": "#/$defs/detectorEntry" },
             "cli.flag": { "$ref": "#/$defs/detectorEntry" },
             "cli.command": { "$ref": "#/$defs/detectorEntry" },
+            "cli.argv": { "$ref": "#/$defs/detectorEntry" },
             "mcp.tool": { "$ref": "#/$defs/detectorEntry" },
             "env.added": { "$ref": "#/$defs/detectorEntry" }
           }

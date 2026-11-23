@@ -2,6 +2,33 @@
 
 Synthetic Node.js repository used for doc-lag Gate 0 and, later, as an automated test fixture.
 
+---
+
+## Docs-sync (`docs.missing`) validation
+
+Missing-docs check cases live under [`docs-sync/`](docs-sync/):
+
+| Path | Role |
+| --- | --- |
+| [`docs-sync/cases.json`](docs-sync/cases.json) | Machine-readable synthetic + public PR cases (≥10 public repos) |
+| [`docs-sync/results/`](docs-sync/results/) | Last replay JSON (per case + `summary.json`) |
+| [`docs-sync/judgments.json`](docs-sync/judgments.json) | Manual TP/FP/FN/TN labels for public PRs |
+| [`docs-sync/PRECISION.md`](docs-sync/PRECISION.md) | Precision / recall report |
+| [`scripts/replay-docs-sync.mjs`](scripts/replay-docs-sync.mjs) | Offline replay harness (`npm run build` first) |
+
+```bash
+npm run build
+node validation/scripts/replay-docs-sync.mjs
+```
+
+Synthetic fixtures cover commander / click / argparse flags, Action inputs/outputs, `package.bin`, MCP tools, opt-in `env.added`, and pairing rules. Public replays cover Actions, Python CLIs, an MCP server, and doc-lag’s own PR that added configurable docs paths.
+
+---
+
+# Fixture cases — `preview-service` (Gate 0)
+
+Synthetic Node.js repository used for doc-lag Gate 0 and, later, as an automated test fixture.
+
 ## Git history
 
 | Ref | SHA | Commit date (America/Sao_Paulo) | Message |

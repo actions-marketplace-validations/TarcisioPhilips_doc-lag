@@ -267,10 +267,12 @@ describe("MCP handlers", () => {
       "package.exports",
       "cli.flag",
       "cli.command",
+      "cli.argv",
       "mcp.tool",
       "env.added",
     ]);
     expect(result.data.detectors.find((d) => d.id === "env.added")?.defaultEnabled).toBe(false);
+    expect(result.data.detectors.find((d) => d.id === "cli.argv")?.defaultEnabled).toBe(false);
     expect(result.data.detectors.find((d) => d.id === "cli.flag")?.defaultEnabled).toBe(true);
     expect(result.text).toContain("docs.missing");
     expect(result.text).toContain("cli.flag");

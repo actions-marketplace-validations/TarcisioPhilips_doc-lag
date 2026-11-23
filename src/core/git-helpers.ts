@@ -37,7 +37,22 @@ export interface CommitTrailerResult {
 export interface GitHelperOptions {
   env?: NodeJS.ProcessEnv;
   warn?: (message: string) => void;
+  /**
+   * Soft cap per object: larger blobs are skipped (null) with a warning.
+   * Default 8 MiB — keeps huge single files from blowing the process.
+   */
+  catFileMaxObjectBytes?: number;
+  /**
+   * Max total uncompressed bytes per `git cat-file --batch` chunk.
+   * Default 16 MiB — avoids Node's execFile maxBuffer crash on large ranges.
+   */
+  catFileChunkBudgetBytes?: number;
 }
+
+/** Default soft skip for a single git object in cat-file batches. */
+export const CAT_FILE_MAX_OBJECT_BYTES = 8 * 1024 * 1024;
+/** Default chunk budget for batched cat-file reads. */
+export const CAT_FILE_CHUNK_BUDGET_BYTES = 16 * 1024 * 1024;
 
 export interface CatFileBatch {
   /** Read an object (`sha` or `ref:path`). Returns null when missing. */
@@ -209,26 +224,28 @@ export function diffNumstatIgnoreWhitespace(
   return entries;
 }
 
+interface BatchCheckEntry {
+  object: string;
+  /** Uncompressed size when present; null when missing. */
+  size: number | null;
+}
+
 /**
- * Read many git objects in one `git cat-file --batch` process (stdin EOF ends the batch).
- * Keys are the requested object names (`sha` or `ref:path`). Missing → null.
- * Read-only: does not touch the worktree or index.
+ * Size-check many objects via `git cat-file --batch-check` (tiny stdout).
  */
-export function catFileBatch(
+function catFileBatchCheck(
   cwd: string,
   objects: string[],
-  options: GitHelperOptions = {},
-): Map<string, Buffer | null> {
-  const results = new Map<string, Buffer | null>();
+  options: GitHelperOptions,
+): BatchCheckEntry[] {
   if (objects.length === 0) {
-    return results;
+    return [];
   }
-
   let output: Buffer;
   try {
-    output = execFileSync("git", ["-C", cwd, "cat-file", "--batch"], {
+    output = execFileSync("git", ["-C", cwd, "cat-file", "--batch-check"], {
       input: `${objects.join("\n")}\n`,
-      maxBuffer: 32 * 1024 * 1024,
+      maxBuffer: 16 * 1024 * 1024,
       stdio: ["pipe", "pipe", "pipe"],
       env: options.env,
     });
@@ -238,9 +255,34 @@ export function catFileBatch(
         ? String((error as { stderr?: Buffer | string }).stderr ?? "").trim()
         : "";
     const suffix = stderr ? `: ${stderr}` : "";
-    throw new ScanError(`git cat-file --batch failed${suffix}`);
+    throw new ScanError(`git cat-file --batch-check failed${suffix}`);
   }
 
+  const lines = output.toString("utf8").split("\n");
+  // Trailing newline yields an empty last line.
+  const entries: BatchCheckEntry[] = [];
+  let lineIndex = 0;
+  for (const object of objects) {
+    const line = lines[lineIndex] ?? "";
+    lineIndex += 1;
+    if (!line || line.endsWith(" missing")) {
+      entries.push({ object, size: null });
+      continue;
+    }
+    const match = /^(?<sha>[0-9a-f]+)\s+(?<type>\w+)\s+(?<size>\d+)$/.exec(line);
+    if (!match?.groups) {
+      throw new ScanError(`Unexpected git cat-file --batch-check line: ${line}`);
+    }
+    entries.push({ object, size: Number.parseInt(match.groups.size!, 10) });
+  }
+  return entries;
+}
+
+function parseCatFileBatchOutput(
+  output: Buffer,
+  objects: string[],
+): Map<string, Buffer | null> {
+  const results = new Map<string, Buffer | null>();
   let offset = 0;
   for (const object of objects) {
     const headerEnd = output.indexOf(0x0a, offset);
@@ -269,8 +311,154 @@ export function catFileBatch(
     offset += 1;
     results.set(object, content);
   }
-
   return results;
+}
+
+function isMaxBufferError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  const err = error as { code?: string; message?: string };
+  return (
+    err.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+    Boolean(err.message && /maxBuffer/i.test(err.message))
+  );
+}
+
+function catFileBatchChunk(
+  cwd: string,
+  objects: string[],
+  options: GitHelperOptions,
+  maxBuffer: number,
+): Map<string, Buffer | null> {
+  if (objects.length === 0) {
+    return new Map();
+  }
+  let output: Buffer;
+  try {
+    output = execFileSync("git", ["-C", cwd, "cat-file", "--batch"], {
+      input: `${objects.join("\n")}\n`,
+      maxBuffer,
+      stdio: ["pipe", "pipe", "pipe"],
+      env: options.env,
+    });
+  } catch (error) {
+    if (isMaxBufferError(error)) {
+      throw error;
+    }
+    const stderr =
+      error && typeof error === "object" && "stderr" in error
+        ? String((error as { stderr?: Buffer | string }).stderr ?? "").trim()
+        : "";
+    const suffix = stderr ? `: ${stderr}` : "";
+    throw new ScanError(`git cat-file --batch failed${suffix}`);
+  }
+  return parseCatFileBatchOutput(output, objects);
+}
+
+/** One-shot batch with a large buffer (fast path for normal PRs). */
+const CAT_FILE_ONESHOT_MAX_BUFFER = 256 * 1024 * 1024;
+
+function catFileBatchChunked(
+  cwd: string,
+  objects: string[],
+  options: GitHelperOptions,
+): Map<string, Buffer | null> {
+  const results = new Map<string, Buffer | null>();
+  const maxObject = options.catFileMaxObjectBytes ?? CAT_FILE_MAX_OBJECT_BYTES;
+  const chunkBudget = options.catFileChunkBudgetBytes ?? CAT_FILE_CHUNK_BUDGET_BYTES;
+  const checked = catFileBatchCheck(cwd, objects, options);
+
+  const pending: Array<{ object: string; size: number }> = [];
+  for (const entry of checked) {
+    if (entry.size === null) {
+      results.set(entry.object, null);
+      continue;
+    }
+    if (entry.size > maxObject) {
+      options.warn?.(
+        `doc-lag: skipping oversized git object ${entry.object} (>${maxObject} bytes)`,
+      );
+      results.set(entry.object, null);
+      continue;
+    }
+    pending.push({ object: entry.object, size: entry.size });
+  }
+
+  let chunk: string[] = [];
+  let chunkBytes = 0;
+  const flush = (): void => {
+    if (chunk.length === 0) {
+      return;
+    }
+    const partial = catFileBatchChunk(
+      cwd,
+      chunk,
+      options,
+      Math.max(32 * 1024 * 1024, chunkBudget + 1024 * 1024),
+    );
+    for (const [key, value] of partial) {
+      results.set(key, value);
+    }
+    chunk = [];
+    chunkBytes = 0;
+  };
+
+  for (const item of pending) {
+    if (chunk.length > 0 && chunkBytes + item.size > chunkBudget) {
+      flush();
+    }
+    chunk.push(item.object);
+    chunkBytes += item.size;
+    if (chunkBytes >= chunkBudget) {
+      flush();
+    }
+  }
+  flush();
+  return results;
+}
+
+/**
+ * Read many git objects via `git cat-file --batch`.
+ * Keys are the requested object names (`sha` or `ref:path`). Missing → null.
+ *
+ * Fast path: one batch with a large maxBuffer (byte-identical for normal ranges).
+ * On maxBuffer overflow, or when test overrides request chunking: size-check via
+ * `--batch-check`, skip oversized objects with a warning, and fetch in budgeted
+ * chunks so huge diffs do not abort with exit 2. Read-only.
+ */
+export function catFileBatch(
+  cwd: string,
+  objects: string[],
+  options: GitHelperOptions = {},
+): Map<string, Buffer | null> {
+  if (objects.length === 0) {
+    return new Map();
+  }
+
+  const forceChunked =
+    options.catFileChunkBudgetBytes !== undefined ||
+    options.catFileMaxObjectBytes !== undefined;
+
+  if (!forceChunked) {
+    try {
+      return catFileBatchChunk(cwd, objects, options, CAT_FILE_ONESHOT_MAX_BUFFER);
+    } catch (error) {
+      if (!isMaxBufferError(error)) {
+        const stderr =
+          error && typeof error === "object" && "stderr" in error
+            ? String((error as { stderr?: Buffer | string }).stderr ?? "").trim()
+            : "";
+        const suffix = stderr ? `: ${stderr}` : "";
+        throw new ScanError(`git cat-file --batch failed${suffix}`);
+      }
+      options.warn?.(
+        "doc-lag: git cat-file --batch exceeded buffer; retrying in size-budgeted chunks",
+      );
+    }
+  }
+
+  return catFileBatchChunked(cwd, objects, options);
 }
 
 /**

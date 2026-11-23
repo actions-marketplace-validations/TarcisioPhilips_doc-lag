@@ -172,6 +172,32 @@ describe("mcp.tool integration fixtures", () => {
     expect(report.findings.filter((f) => f.id.includes("mcp.tool:scan_diff"))).toHaveLength(0);
   });
 
+  it("mcp-tool documented as bold list item → 0 (no false positive)", () => {
+    const fixture = track(
+      createFixtureRepo({
+        baseFiles: {
+          "README.md": "# App\n",
+          "src/mcp.ts": TS_SDK_BASE,
+        },
+        headFiles: {
+          "src/mcp.ts": `${TS_SDK_BASE}server.registerTool("create_entities", {}, async () => ({}));\n`,
+          "README.md": [
+            "# Tools",
+            "",
+            "- **create_entities**",
+            "- **summary**: unrelated",
+            "",
+          ].join("\n"),
+        },
+      }),
+    );
+    enableDocsSync(fixture.repo);
+    const report = scan({ cwd: fixture.repo, base: fixture.base, head: fixture.head });
+    expect(
+      report.findings.filter((f) => f.id.includes("mcp.tool:create_entities")),
+    ).toHaveLength(0);
+  });
+
   it("mcp-tool-ts-no-sdk-import → 0", () => {
     const fixture = track(
       createFixtureRepo({

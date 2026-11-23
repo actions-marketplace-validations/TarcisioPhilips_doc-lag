@@ -1,0 +1,439 @@
+{
+  "generatedAt": "2026-11-20T22:06:04.144Z",
+  "synthetic": {
+    "cases": 16,
+    "tp": 10,
+    "fp": 0,
+    "fn": 0,
+    "crashes": 0,
+    "precision": 1,
+    "recall": 1,
+    "perDetector": {
+      "cli.flag": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "cases": 5,
+        "precision": 1,
+        "recall": 1
+      },
+      "cli.command": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 1,
+        "precision": 1,
+        "recall": 1
+      },
+      "action.input": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 2,
+        "precision": 1,
+        "recall": 1
+      },
+      "action.output": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 1,
+        "precision": 1,
+        "recall": 1
+      },
+      "package.bin": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 1,
+        "precision": 1,
+        "recall": 1
+      },
+      "mcp.tool": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 2,
+        "precision": 1,
+        "recall": 1
+      },
+      "env.added": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 2,
+        "precision": 1,
+        "recall": 1
+      },
+      "rule": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "cases": 2,
+        "precision": 1,
+        "recall": 1
+      }
+    }
+  },
+  "public": {
+    "cases": 13,
+    "crashes": 0,
+    "totalFindings": 0,
+    "repos": [
+      "TarcisioPhilips/doc-lag",
+      "actions/checkout",
+      "softprops/action-gh-release",
+      "modelcontextprotocol/servers",
+      "pallets/click",
+      "psf/black",
+      "httpie/cli",
+      "astral-sh/setup-uv",
+      "pnpm/action-setup",
+      "docker/login-action",
+      "actions/upload-artifact",
+      "actions/setup-node",
+      "actions/github-script"
+    ]
+  },
+  "results": [
+    {
+      "id": "synth-cli-flag-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:cli.flag:--audit@src/cli.ts"
+        ],
+        "got": [
+          "docs.missing:cli.flag:--audit@src/cli.ts"
+        ]
+      }
+    },
+    {
+      "id": "synth-cli-flag-documented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 0,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "expected": [],
+        "got": []
+      }
+    },
+    {
+      "id": "synth-cli-flag-hidden",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 0,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "expected": [],
+        "got": []
+      }
+    },
+    {
+      "id": "synth-cli-command-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:cli.command:publish@src/cli.ts"
+        ],
+        "got": [
+          "docs.missing:cli.command:publish@src/cli.ts"
+        ]
+      }
+    },
+    {
+      "id": "synth-cli-flag-click-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:cli.flag:--region@cli.py"
+        ],
+        "got": [
+          "docs.missing:cli.flag:--region@cli.py"
+        ]
+      }
+    },
+    {
+      "id": "synth-cli-flag-argparse-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:cli.flag:--timeout@cli.py"
+        ],
+        "got": [
+          "docs.missing:cli.flag:--timeout@cli.py"
+        ]
+      }
+    },
+    {
+      "id": "synth-action-input-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:action.input:dry-run@action.yml"
+        ],
+        "got": [
+          "docs.missing:action.input:dry-run@action.yml"
+        ]
+      }
+    },
+    {
+      "id": "synth-action-input-documented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 0,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "expected": [],
+        "got": []
+      }
+    },
+    {
+      "id": "synth-action-output-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:action.output:artifact-url@action.yml"
+        ],
+        "got": [
+          "docs.missing:action.output:artifact-url@action.yml"
+        ]
+      }
+    },
+    {
+      "id": "synth-package-bin-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:package.bin:widget@package.json"
+        ],
+        "got": [
+          "docs.missing:package.bin:widget@package.json"
+        ]
+      }
+    },
+    {
+      "id": "synth-mcp-tool-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:mcp.tool:list_widgets@src/server.ts"
+        ],
+        "got": [
+          "docs.missing:mcp.tool:list_widgets@src/server.ts"
+        ]
+      }
+    },
+    {
+      "id": "synth-mcp-tool-documented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 0,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "expected": [],
+        "got": []
+      }
+    },
+    {
+      "id": "synth-env-added-opt-in",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:env.added:WIDGET_TOKEN@.env.example"
+        ],
+        "got": [
+          "docs.missing:env.added:WIDGET_TOKEN@.env.example"
+        ]
+      }
+    },
+    {
+      "id": "synth-env-added-default-off",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 0,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "expected": [],
+        "got": []
+      }
+    },
+    {
+      "id": "synth-rule-pairing-undocumented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 1,
+      "score": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "expected": [
+          "docs.missing:rule:api-surface"
+        ],
+        "got": [
+          "docs.missing:rule:api-surface"
+        ]
+      }
+    },
+    {
+      "id": "synth-rule-pairing-documented",
+      "kind": "synthetic",
+      "crashed": false,
+      "findingCount": 0,
+      "score": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "expected": [],
+        "got": []
+      }
+    },
+    {
+      "id": "public-doc-lag-14",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-actions-checkout-1369",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-softprops-gh-release-372",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-mcp-servers-5359",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-pallets-click-1355",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-psf-black-3712",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-httpie-1343",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-setup-uv-200",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-pnpm-action-setup-184",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-docker-login-600",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-upload-artifact-764",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-setup-node-1374",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    },
+    {
+      "id": "public-github-script-363",
+      "kind": "public",
+      "crashed": false,
+      "findingCount": 0,
+      "score": null
+    }
+  ]
+}

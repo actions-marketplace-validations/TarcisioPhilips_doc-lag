@@ -64,6 +64,7 @@ const DETECTOR_LANGUAGES: Readonly<Record<SurfaceKind, readonly string[]>> = {
   "package.exports": ["JSON"],
   "cli.flag": ["TypeScript", "JavaScript", "Python"],
   "cli.command": ["TypeScript", "JavaScript", "Python"],
+  "cli.argv": ["TypeScript", "JavaScript", "Python"],
   "mcp.tool": ["TypeScript", "JavaScript", "Python"],
   "env.added": ["dotenv"],
 };

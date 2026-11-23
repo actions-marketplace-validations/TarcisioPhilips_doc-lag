@@ -1,0 +1,43 @@
+{
+  "id": "synth-env-added-opt-in",
+  "kind": "synthetic",
+  "detector": "env.added",
+  "crashed": false,
+  "exitCode": 0,
+  "elapsedMs": 102,
+  "docsSync": {
+    "status": "ran",
+    "enforced": false,
+    "effectiveBase": "a66b7f88cab2b45e5aa98ad50e3b7fb8d2a0362d",
+    "detectors": [
+      "action.input",
+      "action.output",
+      "cli.command",
+      "cli.flag",
+      "env.added",
+      "mcp.tool",
+      "package.bin"
+    ],
+    "rulesEvaluated": 0,
+    "candidateFiles": 1,
+    "newSurfaces": 1,
+    "findings": 1,
+    "omitted": 0,
+    "warnings": []
+  },
+  "findingIds": [
+    "docs.missing:env.added:WIDGET_TOKEN@.env.example"
+  ],
+  "score": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "expected": [
+      "docs.missing:env.added:WIDGET_TOKEN@.env.example"
+    ],
+    "got": [
+      "docs.missing:env.added:WIDGET_TOKEN@.env.example"
+    ]
+  },
+  "stderrTail": ""
+}

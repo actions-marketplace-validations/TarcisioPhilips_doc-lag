@@ -13,6 +13,7 @@ export const SURFACE_KINDS = [
   "package.exports",
   "cli.flag",
   "cli.command",
+  "cli.argv",
   "mcp.tool",
   "env.added",
 ] as const;
@@ -88,6 +89,7 @@ export const DEFAULT_DETECTOR_PATHS: Readonly<Record<SurfaceKind, readonly strin
   "package.exports": PACKAGE_JSON_PATHS,
   "cli.flag": CLI_SOURCE_PATHS,
   "cli.command": CLI_SOURCE_PATHS,
+  "cli.argv": CLI_SOURCE_PATHS,
   "mcp.tool": CLI_SOURCE_PATHS,
   "env.added": ENV_EXAMPLE_PATHS,
 };
@@ -99,6 +101,7 @@ export const DEFAULT_DETECTOR_ENABLED: Readonly<Record<SurfaceKind, boolean>> = 
   "package.exports": false,
   "cli.flag": true,
   "cli.command": true,
+  "cli.argv": false,
   "mcp.tool": true,
   "env.added": false,
 };

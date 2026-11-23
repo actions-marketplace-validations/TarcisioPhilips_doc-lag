@@ -1,5 +1,6 @@
 import type { SurfaceKind } from "../../core/docs-sync-config.js";
 import { detectActionSurfaces } from "./action-yml.js";
+import { detectCliArgv } from "./cli-argv.js";
 import { detectCliCommands } from "./cli-commands.js";
 import { detectCliFlags } from "./cli-flags.js";
 import { detectEnvAdded } from "./env-added.js";
@@ -15,6 +16,7 @@ export const REGISTERED_DETECTOR_KINDS = [
   "package.exports",
   "cli.flag",
   "cli.command",
+  "cli.argv",
   "mcp.tool",
   "env.added",
 ] as const satisfies readonly SurfaceKind[];
@@ -67,6 +69,10 @@ export function listRegisteredDetectors(): DetectorRegistration[] {
       detect: (path, content) => detectCliCommands(path, content),
     },
     {
+      kind: "cli.argv",
+      detect: (path, content) => detectCliArgv(path, content),
+    },
+    {
       kind: "mcp.tool",
       detect: (path, content) => detectMcpTools(path, content),
     },
@@ -110,6 +116,9 @@ export function runRegisteredDetectors(options: {
   }
   if (enabled.has("cli.command")) {
     out.push(...detectCliCommands(options.path, options.content));
+  }
+  if (enabled.has("cli.argv")) {
+    out.push(...detectCliArgv(options.path, options.content));
   }
   if (enabled.has("mcp.tool")) {
     out.push(...detectMcpTools(options.path, options.content));

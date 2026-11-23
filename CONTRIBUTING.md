@@ -2,7 +2,7 @@
 
 Thanks for contributing to **doc-lag**.
 
-**Process:** follow the **Development workflow** in [`AGENTS.md`](AGENTS.md) — same steps for humans and every coding agent (Cursor, Claude Code, Codex, Grok, etc.). It is tool-agnostic and not tied to any particular agent framework. Implementation specs/plans live in local gitignored `.plans/` only (never commit them or paste them into PR bodies beyond a short summary).
+**Process:** follow the **Development workflow** in [`AGENTS.md`](AGENTS.md) — same steps for humans and every coding agent (Cursor, Claude Code, Codex, Grok, etc.). It is tool-agnostic and not tied to any particular agent framework. Keep detailed plans outside the repository; PR descriptions get only a short summary (never paste the whole spec).
 
 **Quick local loop** (Node.js 20+):
 

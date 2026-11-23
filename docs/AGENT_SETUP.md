@@ -3,7 +3,7 @@
 Machine-friendly instructions for coding agents (Claude Code, Cursor, Codex, VS Code Copilot).
 Humans: see the [README quickstart](../README.md#quickstart-1-minute).
 
-**Package:** [`doc-lag`](https://www.npmjs.com/package/doc-lag) on npm (**0.3.0**).  
+**Package:** [`doc-lag`](https://www.npmjs.com/package/doc-lag) on npm (**0.4.0**).  
 **Repo:** https://github.com/TarcisioPhilips/doc-lag  
 **Requires:** Node.js 20+, Git.
 
@@ -163,9 +163,9 @@ args = ["-y", "doc-lag", "mcp"]
 
 | Tool | Purpose |
 | --- | --- |
-| `scan_diff` | Scan a git range (default merge-base with main → `HEAD`). `include_working_tree: true` includes uncommitted edits. Optional `docs_sync` / `docs_sync_enforce` for the missing-docs check. |
-| `explain_finding` | Re-scan and return one finding by stable id (including `docs.missing`). Same `docs_sync` params as `scan_diff`. |
-| `list_rules` | List `scripts.missing`, `links.broken`, `env.stale`, `docs.missing`, plus docs-sync detectors. |
+| `scan_diff` | Scan a git range (default merge-base with main → `HEAD`). `include_working_tree: true` includes uncommitted edits. Optional `docs_sync` / `docs_sync_enforce` for the missing-docs check (**since 0.4.0**). |
+| `explain_finding` | Re-scan and return one finding by stable id (including `docs.missing`). Same `docs_sync` params as `scan_diff` (**since 0.4.0**). |
+| `list_rules` | List `scripts.missing`, `links.broken`, `env.stale`, `docs.missing`, plus docs-sync detectors (**since 0.4.0** for `docs.missing`). |
 
 All tools are read-only. Do not pass `rank: "jev"` unless the user asked.
 
@@ -214,7 +214,7 @@ Optional ranking (`--rank jev`, Action `rank: jev`, MCP `rank: "jev"`) is availa
 
 Optional docs discovery: `doc-lag.config.json`, `--docs-include` / `--docs-exclude`, Action `docs-include` / `docs-exclude`, MCP `docs_include` / `docs_exclude`. JSON Schema: `schema/doc-lag.config.schema.json`. See README **What counts as documentation**.
 
-Optional docs-sync (`docs.missing`): off by default; enable with `docsSync` in config, CLI `--docs-sync`, Action `docs-sync`, or MCP `docs_sync: true`. Enforce with `--docs-sync-enforce` / `docs-sync-enforce` / `docs_sync_enforce`. Skip with commit trailer `Docs-Not-Needed: <reason>` or PR label `no-docs-needed` (Action; use `labeled`/`unlabeled` workflow types).
+Optional docs-sync (`docs.missing`, **since 0.4.0**): off by default; enable with `docsSync` in config, CLI `--docs-sync`, Action `docs-sync`, or MCP `docs_sync: true`. Enforce with `--docs-sync-enforce` / `docs-sync-enforce` / `docs_sync_enforce`. Skip with commit trailer `Docs-Not-Needed: <reason>` or PR label `no-docs-needed` (Action; use `labeled`/`unlabeled` workflow types). Includes opt-in `cli.argv` for hand-rolled argv flags.
 
 ---
 

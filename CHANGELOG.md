@@ -7,36 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-11-23
+
 ### Added
 
-- Docs-sync opt-in `cli.argv` detector for hand-rolled `process.argv` / `sys.argv` long flags (off by default; skipped when commander/argparse/click is imported)
-- Docs-sync validation corpus: `validation/docs-sync/` cases (≥10 public repos + synthetic fixtures), replay script, committed results, and precision report; dogfood config ignores `validation/**` (fixture bait strings)
-- Docs-sync mention index: bold tokens (`**name**` / `__name__`) count as structured mentions for MCP tools and Action inputs/outputs (and related kinds)
-- Dogfood docs-sync on this repository: root `doc-lag.config.json` (`enforce: false`), CI `pull_request` types include `labeled`/`unlabeled`, and JSON Schema `schema/doc-lag.config.schema.json` for editor autocomplete
-- Docs-sync Jev exclusion + caps/perf: `docs.missing` findings are never sent to Jev ranking; oversized/candidate-cap truncation verified; Node 22 perf budget for 2,000 changed files
-- Docs-sync MCP wiring: `scan_diff` / `explain_finding` params `docs_sync` / `docs_sync_enforce`, **Action items for the agent** text for `docs.missing`, and `list_rules` includes `docs.missing` plus detectors
-- Docs-sync Action/reporter surfacing: sticky comment + job summary **Missing documentation** section, SARIF locations at declaration sites, Action inputs `docs-sync` / `docs-sync-enforce` / `docs-sync-skip-labels`, output `docs-missing-count`, and PR label skip from the event payload
-- Docs-sync opt-in `env.added` detector for new keys in `.env.example`-family files (reuses env extractors; off by default)
-- Docs-sync MCP surface detector for `mcp.tool` (TS/JS `@modelcontextprotocol/sdk` `registerTool` / `tool`, Python FastMCP `@x.tool`) with underscore-name skipping
-- Docs-sync CLI surface detectors for `cli.flag` / `cli.command` (commander, argparse, click) with comment stripping, hidden/suppressed handling, and negation mention matching
-- Docs-sync structured surface detectors for `action.input` / `action.output` (YAML via `yaml`) and `package.bin` / `package.exports`, plus a mention index over in-scope docs (MDX/frontmatter-aware)
-- Docs-sync pairing rules engine (`docs.missing`): enable with `docsSync` in config or `--docs-sync` / `DOC_LAG_DOCS_SYNC`; optional `--docs-sync-enforce` / `DOC_LAG_DOCS_SYNC_ENFORCE`; skip via `Docs-Not-Needed` commit trailer or `no-docs-needed` label (Action); text/JSON report `docsSync` metadata. Off by default; output stays byte-identical when disabled
-- Config schema support for `docsSync` in `doc-lag.config.json` / `.doc-lag.json` (types, defaults, strict validation, env `DOC_LAG_DOCS_SYNC` / `DOC_LAG_DOCS_SYNC_ENFORCE`)
-- MDX support (`.mdx`) with heuristic preparation: YAML frontmatter, `import`/`export`, and JSX/MDX expressions are neutralized without shifting finding line numbers
-- Configurable documentation discovery via `doc-lag.config.json` / `.doc-lag.json` (`docs.include` / `docs.exclude`)
-- CLI: `--config`, `--docs-include`, `--docs-exclude`; env `DOC_LAG_CONFIG`
-- GitHub Action inputs: `config`, `docs-include`, `docs-exclude`
-- MCP `scan_diff` / `explain_finding` params: `config`, `docs_include`, `docs_exclude`
-- Broader default include globs: `documentation/**`, `website/docs/**`, `website/src/pages/**`, `apps/docs/**`, `packages/*/README.md`, `packages/*/docs/**`, `apps/*/README.md`, `content/**` (md + mdx)
-- Default excludes for generated/build trees and `CHANGELOG.md` / `LICENSE.md`
+- **Docs-sync** (`docs.missing`): optional check for missing documentation when a PR adds a public surface or changes paired code without updating the docs that should describe it. **Off by default.** Enable with a `docsSync` object in config, CLI `--docs-sync` / `DOC_LAG_DOCS_SYNC`, Action `docs-sync`, or MCP `docs_sync`. Findings are `needs-review` unless `docsSync.enforce` / `--docs-sync-enforce` / Action `docs-sync-enforce` / MCP `docs_sync_enforce`. Skip via commit trailer `Docs-Not-Needed: <reason>` or PR label `no-docs-needed` (Action; labels from the event payload — use `labeled`/`unlabeled` workflow types). Default reports stay byte-identical when disabled.
+  - Pairing rules (`docsSync.rules`) for code↔docs path groups
+  - Surface detectors: `action.input` / `action.output`, `package.bin` (opt-in `package.exports`), `cli.flag` / `cli.command` (commander, argparse, click), `mcp.tool`, opt-in `env.added`, and opt-in `cli.argv` (hand-rolled `process.argv` / `sys.argv` long flags; skipped when a framework parser is imported)
+  - Mention index over in-scope docs (MDX/frontmatter-aware): inline code, markdown tables, fenced YAML/`with:` keys, and bold tokens (`**name**` / `__name__`). Common English surface names (e.g. Action input `archive`) require those structured hits — not headings or bare prose alone
+  - Action/reporter: sticky comment + job summary **Missing documentation** section, SARIF locations at declaration sites, inputs `docs-sync` / `docs-sync-enforce` / `docs-sync-skip-labels`, output `docs-missing-count`
+  - MCP: `scan_diff` / `explain_finding` params `docs_sync` / `docs_sync_enforce`, **Action items for the agent** text when `docs.missing` exists, `list_rules` includes `docs.missing` and detectors
+  - Optional Jev ranking never scores `docs.missing`; oversized/candidate-cap truncation verified; Node 22 perf budget for large diffs
+  - Config schema for `docsSync`; JSON Schema `schema/doc-lag.config.schema.json` for editor autocomplete
+  - Dogfood on this repository (`doc-lag.config.json` with `enforce: false`; CI Dogfood `fail-on: none`; ignore `validation/**` fixture bait)
+  - Validation corpus under `validation/docs-sync/` (synthetic + public PR cases, replay script, committed results, precision report)
+- Configurable documentation discovery via `doc-lag.config.json` / `.doc-lag.json` (`docs.include` / `docs.exclude`); CLI `--config` / `--docs-include` / `--docs-exclude`; Action and MCP equivalents; env `DOC_LAG_CONFIG`
+- MDX support (`.mdx`) with heuristic preparation (frontmatter / import-export / JSX neutralized without shifting finding line numbers)
+- Broader default include globs (site/monorepo paths) and default excludes for generated/build trees plus `CHANGELOG.md` / `LICENSE.md`
 - README section **What counts as documentation**
-- Shared **Development workflow** in [`AGENTS.md`](AGENTS.md) (local `.plans/` specs → plan → tests → focused PRs; docs sync; safety; no feature-PR releases) and [`CONTRIBUTING.md`](CONTRIBUTING.md) pointer for humans and coding agents; `.plans/` gitignored
+- Shared **Development workflow** in [`AGENTS.md`](AGENTS.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md) for humans and coding agents
 
 ### Changed
 
-- Docs-sync mention index: common English surface names (e.g. Action input `archive`) require structured documentation hits (inline code, table cell, bold, or fenced YAML/`with:` key), not heading/prose alone
+- Docs-sync mention index: common English surface names require structured documentation hits (inline code, table cell, bold, or fenced YAML/`with:` key), not heading/prose alone
+- Default scan may report additional findings in monorepos and MDX doc sites (more paths in scope). Escape hatch: set `docs.include` to the legacy root + `docs/**/*.md` list. Findings for previously scanned Markdown paths remain compatible; report `schemaVersion` stays `1.0`
+
+### Fixed
+
 - `git cat-file --batch` reads no longer abort huge diffs at a 32 MiB Node maxBuffer: one-shot large buffer first, then size-budgeted chunks; oversized objects are skipped with a warning instead of exit 2
-- Default scan may report additional findings in monorepos and MDX doc sites (more paths in scope). Escape hatch: set `docs.include` to the legacy root + `docs/**/*.md` list. Findings for previously scanned Markdown paths remain compatible; report `schemaVersion` stays `1.0`.
 
 ## [0.3.0] — 2026-11-18
 
@@ -67,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tools: `scan_diff`, `explain_finding`, `list_rules`
   - Optional `include_working_tree` for uncommitted edits
 
+[0.4.0]: https://github.com/TarcisioPhilips/doc-lag/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/TarcisioPhilips/doc-lag/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/TarcisioPhilips/doc-lag/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/TarcisioPhilips/doc-lag/compare/v0.1.1...v0.2.0

@@ -219,12 +219,12 @@ commands found in documentation.
 | `--config <path>` | auto-discover | `doc-lag.config.json` or `.doc-lag.json` |
 | `--docs-include <glob>` | built-in includes | Repeatable; replaces include when set |
 | `--docs-exclude <glob>` | built-in excludes | Repeatable; replaces exclude when set |
-| `--docs-sync` / `--no-docs-sync` | off | Force-enable/disable the docs-sync check |
-| `--docs-sync-enforce` | off | Fail on `docs.missing` under `--fail-on confirmed` (implies `--docs-sync`) |
+| `--docs-sync` / `--no-docs-sync` | off | Force-enable/disable the docs-sync check (**since 0.4.0**) |
+| `--docs-sync-enforce` | off | Fail on `docs.missing` under `--fail-on confirmed` (implies `--docs-sync`) (**since 0.4.0**) |
 
 `DOC_LAG_RANK=jev` is equivalent to `--rank jev` when the flag is omitted (**since 0.3.0**).  
 `DOC_LAG_CONFIG=<path>` is equivalent to `--config` when the flag is omitted.  
-`DOC_LAG_DOCS_SYNC=true|false` and `DOC_LAG_DOCS_SYNC_ENFORCE=true|false` match the docs-sync flags when omitted.
+`DOC_LAG_DOCS_SYNC=true|false` and `DOC_LAG_DOCS_SYNC_ENFORCE=true|false` match the docs-sync flags when omitted (**since 0.4.0**).
 
 Example `doc-lag.config.json` (docs discovery + optional docs-sync):
 
@@ -246,7 +246,7 @@ Example `doc-lag.config.json` (docs discovery + optional docs-sync):
 
 Point `$schema` at [`schema/doc-lag.config.schema.json`](schema/doc-lag.config.schema.json) for editor autocomplete.
 
-### Missing docs check (`docs.missing`)
+### Missing docs check (`docs.missing`) *(since 0.4.0)*
 
 Besides stale references, doc-lag can flag **missing** documentation: a PR that
 adds a public surface (CLI flag, Action input, MCP tool, …) or changes paired
@@ -266,7 +266,7 @@ When enabled it can report:
 | `action.input` / `action.output` | New keys in `action.yml` not mentioned in docs |
 | `package.bin` (and opt-in `package.exports`) | New bin / exports subpaths not mentioned |
 | `cli.flag` / `cli.command` | New commander / argparse / click flags or commands not mentioned |
-| `cli.argv` (opt-in) | New hand-rolled `process.argv` / `sys.argv` long flags not mentioned |
+| `cli.argv` (opt-in) | New hand-rolled `process.argv` / `sys.argv` long flags not mentioned (**since 0.4.0**) |
 | `mcp.tool` | New MCP tools not mentioned |
 | `env.added` (opt-in) | New keys in `.env.example`-family files not mentioned |
 
@@ -396,9 +396,10 @@ event payload (no extra API call).
 
 **Inputs:** `fail-on`, `comment`, `working-directory`, `sarif`, `rank` (**since 0.3.0**),
 optional `base` / `head` overrides, `config` / `docs-include` / `docs-exclude`,
-`docs-sync` / `docs-sync-enforce` / `docs-sync-skip-labels` (empty = use config).  
+`docs-sync` / `docs-sync-enforce` / `docs-sync-skip-labels` (empty = use config;
+**since 0.4.0**).  
 **Outputs:** `findings-count`, `confirmed-count`, `needs-review-count`,
-`docs-missing-count`, `report-path`, `sarif-path`.
+`docs-missing-count` (**since 0.4.0**), `report-path`, `sarif-path`.
 
 With `comment: true` (default), zero findings still upsert the sticky comment
 (“No documentation drift findings…”) so it is obvious the scan ran. Re-runs
@@ -434,9 +435,9 @@ All tools are annotated read-only; paths are constrained to the workspace.
 
 | Tool | Purpose |
 | --- | --- |
-| `scan_diff` | Scan `base..head` (defaults: merge-base with main → `HEAD`). Set `include_working_tree: true` for uncommitted edits. Optional `rank: "jev"` (**since 0.3.0**). Optional `docs_sync` / `docs_sync_enforce` for `docs.missing` (Action items text when findings exist). |
-| `explain_finding` | Re-scan and return one finding by stable id (including `docs.missing`) with full evidence. |
-| `list_rules` | List `scripts.missing`, `links.broken`, `env.stale`, `docs.missing`, plus docs-sync detectors. |
+| `scan_diff` | Scan `base..head` (defaults: merge-base with main → `HEAD`). Set `include_working_tree: true` for uncommitted edits. Optional `rank: "jev"` (**since 0.3.0**). Optional `docs_sync` / `docs_sync_enforce` for `docs.missing` (**since 0.4.0**; Action items text when findings exist). |
+| `explain_finding` | Re-scan and return one finding by stable id (including `docs.missing` **since 0.4.0**) with full evidence. |
+| `list_rules` | List `scripts.missing`, `links.broken`, `env.stale`, `docs.missing` (**since 0.4.0**), plus docs-sync detectors. |
 
 ---
 

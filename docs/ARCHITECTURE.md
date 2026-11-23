@@ -89,7 +89,7 @@ Current rules:
 - `docs.missing` (opt-in): new public surfaces or pairing-rule mismatches; see
   **Docs-sync** below
 
-## Docs-sync (optional `docs.missing`)
+## Docs-sync (optional `docs.missing`, since 0.4.0)
 
 Off by default. When `docsSync` is enabled (config object, `--docs-sync`, Action
 `docs-sync`, MCP `docs_sync`, or `DOC_LAG_DOCS_SYNC`), `src/docs-sync/` runs

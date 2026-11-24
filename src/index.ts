@@ -12,6 +12,7 @@ export {
 } from "./core/docs-config.js";
 export {
   DEFAULT_CODE_EXCLUDE,
+  DEFAULT_DOCS_SYNC_IGNORE,
   SURFACE_KINDS,
   createDefaultDocsSyncConfig,
   parseDocsSyncBoolean,

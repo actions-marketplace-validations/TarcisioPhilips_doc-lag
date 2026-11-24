@@ -98,8 +98,9 @@ after the classic rules:
 1. **Skip gate** — disabled / PR label in `skipLabels` / `Docs-Not-Needed`
    trailer → `report.docsSync.status: "skipped"` (no findings).
 2. **Effective base** — `git merge-base` of base/head (fallback: base + warning).
-3. **Candidates** — changed non-doc files minus ignores, generated markers, and
-   default code excludes.
+3. **Candidates** — changed non-doc files minus `docsSync.ignore` (defaults:
+   scripts/examples/tests), generated markers, and hard code excludes
+   (`node_modules` / `dist` / …).
 4. **Detectors** — pure extractors per surface kind (`action.input`,
    `action.output`, `package.bin`, `package.exports`, `cli.flag`, `cli.command`,
    opt-in `cli.argv`, `mcp.tool`, opt-in `env.added`) at base and head; **new** =

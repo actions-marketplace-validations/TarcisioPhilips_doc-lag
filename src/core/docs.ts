@@ -4,6 +4,7 @@ import { DEFAULT_DOCS_EXCLUDE, DEFAULT_DOCS_INCLUDE } from "./docs-config.js";
 
 const ROOT_DOC = /^(README|AGENTS|CLAUDE|CONTRIBUTING)\.md$/i;
 const ROOT_DOC_PATTERN = /^(README|AGENTS|CLAUDE|CONTRIBUTING)\.md$/i;
+const GLOB_OPTS = { dot: true, nocase: false, bash: true } as const;
 
 export type { DocsDiscoveryOptions };
 
@@ -19,17 +20,6 @@ function isUnsafePath(normalized: string): boolean {
   return parts.includes("node_modules") || parts.includes(".git") || parts.includes("..");
 }
 
-function matchesAny(normalized: string, patterns: string[]): boolean {
-  if (patterns.length === 0) {
-    return false;
-  }
-  return picomatch.isMatch(normalized, patterns, {
-    dot: true,
-    nocase: false,
-    bash: true,
-  });
-}
-
 /**
  * Historical compatibility: when an include pattern is exactly one of the four
  * root canonical basenames, match that basename case-insensitively at repo root.
@@ -43,6 +33,33 @@ function matchesLegacyRootDoc(normalized: string, include: string[]): boolean {
 }
 
 /**
+ * Precompile include/exclude globs for many path checks (docs-sync candidates).
+ */
+export function createDocumentationPathMatcher(
+  options?: Partial<DocsDiscoveryOptions>,
+): (filePath: string) => boolean {
+  const include = options?.include ?? [...DEFAULT_DOCS_INCLUDE];
+  const exclude = options?.exclude ?? [...DEFAULT_DOCS_EXCLUDE];
+  const includeMatch =
+    include.length > 0 ? picomatch(include, GLOB_OPTS) : (): boolean => false;
+  const excludeMatch =
+    exclude.length > 0 ? picomatch(exclude, GLOB_OPTS) : (): boolean => false;
+
+  return (filePath: string): boolean => {
+    const normalized = normalizeRepoPath(filePath);
+    if (isUnsafePath(normalized)) {
+      return false;
+    }
+    const included =
+      includeMatch(normalized) || matchesLegacyRootDoc(normalized, include);
+    if (!included) {
+      return false;
+    }
+    return !excludeMatch(normalized);
+  };
+}
+
+/**
  * True when `filePath` is in the documentation discovery set.
  * Hard safety denies always apply; then include (globs + legacy root basenames), then exclude.
  */
@@ -50,30 +67,15 @@ export function isDocumentationPath(
   filePath: string,
   options?: Partial<DocsDiscoveryOptions>,
 ): boolean {
-  const normalized = normalizeRepoPath(filePath);
-  if (isUnsafePath(normalized)) {
-    return false;
-  }
-
-  const include = options?.include ?? [...DEFAULT_DOCS_INCLUDE];
-  const exclude = options?.exclude ?? [...DEFAULT_DOCS_EXCLUDE];
-
-  const included =
-    matchesAny(normalized, include) || matchesLegacyRootDoc(normalized, include);
-  if (!included) {
-    return false;
-  }
-  if (matchesAny(normalized, exclude)) {
-    return false;
-  }
-  return true;
+  return createDocumentationPathMatcher(options)(filePath);
 }
 
 export function listDocumentationFiles(
   files: string[],
   options?: Partial<DocsDiscoveryOptions>,
 ): string[] {
+  const isDoc = createDocumentationPathMatcher(options);
   return files
-    .filter((filePath) => isDocumentationPath(filePath, options))
+    .filter((filePath) => isDoc(filePath))
     .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 }

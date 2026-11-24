@@ -7,9 +7,8 @@ import type { DocsSyncConfig, DocsSyncRule } from "../core/docs-sync-config.js";
 import type { ChangeInfo, EvidenceItem, Finding } from "../types.js";
 import type { CandidateFile } from "./candidates.js";
 import {
+  createGlobMatcher,
   isGlobPattern,
-  matchesAnyGlob,
-  matchesGlob,
   normalizeRepoPath,
   packageRootFor,
   resolveDocsPattern,
@@ -90,9 +89,10 @@ function suggestRuleTarget(
     }
   }
 
+  const globMatch = createGlobMatcher(globs);
   const matched: string[] = [];
   for (const filePath of headFiles) {
-    if (globs.some((glob) => matchesGlob(filePath, glob))) {
+    if (globMatch(filePath)) {
       matched.push(filePath);
     }
   }
@@ -171,17 +171,22 @@ function buildRuleFinding(options: {
   };
 }
 
-function ruleCodeMatches(file: CandidateFile, rule: DocsSyncRule): boolean {
+function ruleCodeMatches(
+  file: CandidateFile,
+  rule: DocsSyncRule,
+  codeMatches: (path: string) => boolean,
+  excludeMatches: (path: string) => boolean,
+): boolean {
   if (file.pureRename) {
     return false;
   }
   if (!rule.changeKinds.includes(file.kind)) {
     return false;
   }
-  if (!matchesAnyGlob(file.path, rule.code)) {
+  if (!codeMatches(file.path)) {
     return false;
   }
-  if (rule.exclude.length > 0 && matchesAnyGlob(file.path, rule.exclude)) {
+  if (rule.exclude.length > 0 && excludeMatches(file.path)) {
     return false;
   }
   return true;
@@ -195,9 +200,10 @@ function docsMeaningfullyUpdated(
   packageRoot?: string,
 ): boolean {
   const patterns = rule.docs.map((pattern) => resolveDocsPattern(pattern, packageRoot));
+  const docsMatch = createGlobMatcher(patterns);
   for (const entry of ctx.entries) {
     const path = normalizeRepoPath(entry.path);
-    if (!patterns.some((pattern) => matchesGlob(path, pattern))) {
+    if (!docsMatch(path)) {
       continue;
     }
     if (isMeaningfulChange(path, nameStatus, numstat)) {
@@ -227,7 +233,11 @@ export function evaluatePairingRules(ctx: RuleEvalContext): Finding[] {
   const skipTrailer = ctx.config.skipTrailer;
 
   for (const rule of ctx.config.rules) {
-    const matched = ctx.codeCandidates.filter((file) => ruleCodeMatches(file, rule));
+    const codeMatches = createGlobMatcher(rule.code);
+    const excludeMatches = createGlobMatcher(rule.exclude);
+    const matched = ctx.codeCandidates.filter((file) =>
+      ruleCodeMatches(file, rule, codeMatches, excludeMatches),
+    );
     if (matched.length === 0) {
       continue;
     }

@@ -25,11 +25,13 @@ describe("isDocumentationPath (defaults)", () => {
     expect(isDocumentationPath("packages/api/README.md")).toBe(true);
     expect(isDocumentationPath("packages/api/docs/usage.md")).toBe(true);
     expect(isDocumentationPath("apps/web/README.md")).toBe(true);
+    expect(isDocumentationPath("src/foo/README.md")).toBe(true);
+    expect(isDocumentationPath("servers/fetch/README.md")).toBe(true);
     expect(isDocumentationPath("content/blog/hello.mdx")).toBe(true);
   });
 
   it("excludes unsafe, generated, and noisy paths by default", () => {
-    expect(isDocumentationPath("src/README.md")).toBe(false);
+    expect(isDocumentationPath("src/main.ts")).toBe(false);
     expect(isDocumentationPath("package.json")).toBe(false);
     expect(isDocumentationPath("docs/note.txt")).toBe(false);
     expect(isDocumentationPath("node_modules/foo/README.md")).toBe(false);

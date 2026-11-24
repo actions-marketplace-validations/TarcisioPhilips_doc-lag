@@ -57,7 +57,7 @@ describe("isDocumentationPath", () => {
   });
 
   it("excludes other files", () => {
-    expect(isDocumentationPath("src/README.md")).toBe(false);
+    expect(isDocumentationPath("src/README.md")).toBe(true);
     expect(isDocumentationPath("package.json")).toBe(false);
     expect(isDocumentationPath("docs/note.txt")).toBe(false);
     expect(isDocumentationPath("node_modules/foo/README.md")).toBe(false);

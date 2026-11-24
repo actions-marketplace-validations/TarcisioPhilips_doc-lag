@@ -47,6 +47,11 @@ export interface GitHelperOptions {
    * Default 16 MiB — avoids Node's execFile maxBuffer crash on large ranges.
    */
   catFileChunkBudgetBytes?: number;
+  /**
+   * One-shot `cat-file --batch` maxBuffer (bytes). Default 256 MiB.
+   * Tests may lower this to force the size-budgeted fallback.
+   */
+  catFileOneshotMaxBufferBytes?: number;
 }
 
 /** Default soft skip for a single git object in cat-file batches. */
@@ -319,9 +324,12 @@ function isMaxBufferError(error: unknown): boolean {
     return false;
   }
   const err = error as { code?: string; message?: string };
+  // Node 20+ often raises ENOBUFS (not ERR_CHILD_PROCESS_STDIO_MAXBUFFER) when
+  // spawnSync stdout exceeds maxBuffer — treat both as overflow and fall back.
   return (
     err.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
-    Boolean(err.message && /maxBuffer/i.test(err.message))
+    err.code === "ENOBUFS" ||
+    Boolean(err.message && /maxBuffer|ENOBUFS/i.test(err.message))
   );
 }
 
@@ -441,10 +449,15 @@ export function catFileBatch(
     options.catFileMaxObjectBytes !== undefined;
 
   if (!forceChunked) {
+    const oneshotMax =
+      options.catFileOneshotMaxBufferBytes ?? CAT_FILE_ONESHOT_MAX_BUFFER;
     try {
-      return catFileBatchChunk(cwd, objects, options, CAT_FILE_ONESHOT_MAX_BUFFER);
+      return catFileBatchChunk(cwd, objects, options, oneshotMax);
     } catch (error) {
       if (!isMaxBufferError(error)) {
+        if (error instanceof ScanError) {
+          throw error;
+        }
         const stderr =
           error && typeof error === "object" && "stderr" in error
             ? String((error as { stderr?: Buffer | string }).stderr ?? "").trim()

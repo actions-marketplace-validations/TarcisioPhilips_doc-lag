@@ -259,6 +259,38 @@ describe("catFileBatch / createCatFileBatch", () => {
       true,
     );
   });
+
+  it("falls back to chunked reads when oneshot hits ENOBUFS/maxBuffer (Node overflow)", () => {
+    // Several medium blobs whose combined stdout exceeds a tiny oneshot maxBuffer.
+    // On Node 20+ that surfaces as ENOBUFS (not ERR_CHILD_PROCESS_STDIO_MAXBUFFER).
+    const chunk = `${"y".repeat(8000)}\n`;
+    const fixture = track(
+      createFixtureRepo({
+        baseFiles: {
+          "a.txt": chunk,
+          "b.txt": chunk,
+          "c.txt": chunk,
+          "d.txt": chunk,
+        },
+      }),
+    );
+    const warnings: string[] = [];
+    const objects = [
+      `${fixture.head}:a.txt`,
+      `${fixture.head}:b.txt`,
+      `${fixture.head}:c.txt`,
+      `${fixture.head}:d.txt`,
+    ];
+    // Only lower oneshot maxBuffer — do not set chunkBudget (that forces chunked
+    // and would skip the oneshot→ENOBUFS fallback path under test).
+    const results = catFileBatch(fixture.repo, objects, {
+      catFileOneshotMaxBufferBytes: 4_000,
+      warn: (message) => warnings.push(message),
+    });
+    expect(results.get(`${fixture.head}:a.txt`)?.toString("utf8")).toBe(chunk);
+    expect(results.get(`${fixture.head}:d.txt`)?.toString("utf8")).toBe(chunk);
+    expect(warnings.some((w) => /exceeded buffer|retrying/i.test(w))).toBe(true);
+  });
 });
 
 describe("findCommitTrailer", () => {

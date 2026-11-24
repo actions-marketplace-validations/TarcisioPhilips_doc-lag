@@ -32,7 +32,7 @@ By default doc-lag scans these paths at `head` (`.md` and `.mdx`):
 | Root canonical docs | `README.md`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md` |
 | Docs trees | `docs/**`, `documentation/**`, `content/**` |
 | Site / app docs | `website/docs/**`, `website/src/pages/**`, `apps/docs/**` |
-| Monorepo package docs | `packages/*/README.md`, `packages/*/docs/**`, `apps/*/README.md` |
+| Nested / monorepo READMEs | `**/README.md` (package, `src/*`, MCP server dirs, …), `packages/*/docs/**` |
 
 Excluded by default: `node_modules`, `.git`, `dist`, `build`, `.next`, `out`, `coverage`,
 `vendor`, `.venv`, `site`, `_site`, plus `CHANGELOG.md` / `LICENSE.md`.
@@ -285,6 +285,8 @@ Findings are `needs-review` with optional `surface` metadata. They do **not** fa
 - PR label: `no-docs-needed` (Action; labels from the event payload — subscribe to
   `labeled` / `unlabeled` so adding/removing the label re-runs the job)
 - Config: `ignoreSymbols` / `ignore` for known-undocumented surfaces or paths
+  (`ignore` replaces the built-in soft defaults: `scripts/**`, `examples/**`,
+  `tests/**`, and common test/fixture globs)
 
 See [What counts as documentation](#what-counts-as-documentation) for which files
 count as mentions. This repo dogfoods docs-sync via root `doc-lag.config.json`

@@ -8,9 +8,9 @@ import {
   DEFAULT_CODE_EXCLUDE,
   type ChangeKind,
 } from "../core/docs-sync-config.js";
-import { isDocumentationPath } from "../core/docs.js";
+import { createDocumentationPathMatcher } from "../core/docs.js";
 import type { DocsDiscoveryOptions } from "../types.js";
-import { matchesAnyGlob, normalizeRepoPath } from "./match.js";
+import { createGlobMatcher, normalizeRepoPath } from "./match.js";
 
 export const MAX_CANDIDATE_CODE_FILES = 2000;
 export const MAX_FILE_BYTES = 1_048_576;
@@ -86,7 +86,8 @@ export function buildCandidates(options: {
     options.head,
   );
 
-  const codeExclude = [...DEFAULT_CODE_EXCLUDE, ...options.ignore];
+  const isExcluded = createGlobMatcher([...DEFAULT_CODE_EXCLUDE, ...options.ignore]);
+  const isDocPath = createDocumentationPathMatcher(options.docsOptions);
   const headPathsForAttr = [
     ...new Set(
       entries
@@ -126,21 +127,15 @@ export function buildCandidates(options: {
     const pureRename = entry.pureRename === true;
 
     // Docs set is never "code".
-    const pathIsDoc = isDocumentationPath(path, options.docsOptions);
-    const prevIsDoc = previousPath
-      ? isDocumentationPath(previousPath, options.docsOptions)
-      : false;
+    const pathIsDoc = isDocPath(path);
+    const prevIsDoc = previousPath ? isDocPath(previousPath) : false;
 
     if (kind === "deleted") {
-      if (!pathIsDoc && !matchesAnyGlob(path, codeExclude)) {
+      if (!pathIsDoc && !isExcluded(path)) {
         baseSidePaths.push(path);
       }
       // Deleted code still participates in pairing rules when changeKinds includes deleted.
-      if (
-        !pathIsDoc &&
-        !matchesAnyGlob(path, codeExclude) &&
-        !linguistGenerated.has(path)
-      ) {
+      if (!pathIsDoc && !isExcluded(path) && !linguistGenerated.has(path)) {
         codeCandidates.push({ path, kind, pureRename: false });
       }
       continue;
@@ -149,7 +144,7 @@ export function buildCandidates(options: {
     if (pathIsDoc || (kind === "renamed" && prevIsDoc && pathIsDoc)) {
       continue;
     }
-    if (matchesAnyGlob(path, codeExclude)) {
+    if (isExcluded(path)) {
       continue;
     }
     if (linguistGenerated.has(path)) {

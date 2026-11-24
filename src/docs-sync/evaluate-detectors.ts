@@ -2,7 +2,7 @@ import { catFileBatch } from "../core/git-helpers.js";
 import type { DocsSyncConfig, SurfaceKind } from "../core/docs-sync-config.js";
 import { listDocumentationFiles } from "../core/docs.js";
 import type { DocsDiscoveryOptions, Finding } from "../types.js";
-import { matchesAnyGlob, matchesGlob, normalizeRepoPath } from "./match.js";
+import { createGlobMatcher, matchesAnyGlob, matchesGlob, normalizeRepoPath } from "./match.js";
 import {
   isRegisteredDetectorKind,
   runRegisteredDetectors,
@@ -98,23 +98,37 @@ function filterPathsForKinds(
       globs.add(pattern);
     }
   }
-  const patterns = [...globs];
-  return paths.filter((p) => matchesAnyGlob(p, patterns));
+  const matches = createGlobMatcher([...globs]);
+  return paths.filter((p) => matches(p));
 }
 
-function nearestReadme(sourcePath: string, headFiles: Set<string>): string | undefined {
+/** Walk up from the source dir; cache by directory so siblings share one lookup. */
+function nearestReadme(
+  sourcePath: string,
+  headFiles: Set<string>,
+  cache: Map<string, string | undefined>,
+): string | undefined {
   const parts = normalizeRepoPath(sourcePath).split("/");
   parts.pop();
-  while (true) {
-    const candidate = parts.length === 0 ? "README.md" : `${parts.join("/")}/README.md`;
-    if (headFiles.has(candidate)) {
-      return candidate;
-    }
-    if (parts.length === 0) {
-      return undefined;
-    }
-    parts.pop();
+  const dirKey = parts.join("/");
+  if (cache.has(dirKey)) {
+    return cache.get(dirKey);
   }
+  let result: string | undefined;
+  const walk = [...parts];
+  while (true) {
+    const candidate = walk.length === 0 ? "README.md" : `${walk.join("/")}/README.md`;
+    if (headFiles.has(candidate)) {
+      result = candidate;
+      break;
+    }
+    if (walk.length === 0) {
+      break;
+    }
+    walk.pop();
+  }
+  cache.set(dirKey, result);
+  return result;
 }
 
 function suggestDetectorTarget(options: {
@@ -123,8 +137,9 @@ function suggestDetectorTarget(options: {
   index: MentionIndex;
   docsGlobs: string[] | undefined;
   headFiles: Set<string>;
+  readmeCache: Map<string, string | undefined>;
 }): { path: string; line: number; siblings: string[] } {
-  const { surface, baseSurfaces, index, docsGlobs, headFiles } = options;
+  const { surface, baseSurfaces, index, docsGlobs, headFiles, readmeCache } = options;
   const siblings = baseSurfaces
     .filter((s) => s.kind === surface.kind && s.path === surface.path && s.name !== surface.name)
     .map((s) => s.name)
@@ -157,7 +172,7 @@ function suggestDetectorTarget(options: {
     }
   }
 
-  const readme = nearestReadme(surface.path, headFiles);
+  const readme = nearestReadme(surface.path, headFiles, readmeCache);
   if (readme) {
     return { path: readme, line: 1, siblings: siblings.slice(0, 3) };
   }
@@ -316,6 +331,7 @@ export function evaluateDetectorFindings(options: {
   const index = buildMentionIndex({ docs });
   const headFileSet = new Set(options.headFiles);
   const baseList = [...baseSurfaces.values()];
+  const readmeCache = new Map<string, string | undefined>();
 
   const findings: Finding[] = [];
   for (const surface of newSurfaces) {
@@ -336,6 +352,7 @@ export function evaluateDetectorFindings(options: {
       index,
       docsGlobs: detectorDocs,
       headFiles: headFileSet,
+      readmeCache,
     });
     findings.push(
       buildDetectorFinding({

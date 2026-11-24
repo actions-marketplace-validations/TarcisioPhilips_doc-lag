@@ -55,7 +55,7 @@
         },
         "ignore": {
           "type": "array",
-          "description": "Extra code path globs excluded from docs-sync candidates.",
+          "description": "Code path globs excluded from docs-sync candidates. Replaces the built-in default (scripts/**, examples/**, tests/**, and common test/fixture patterns). Use [] to clear soft ignores; hard excludes (node_modules, dist, …) always apply.",
           "items": { "type": "string", "minLength": 1 }
         },
         "ignoreSymbols": {

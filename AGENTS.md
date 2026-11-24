@@ -21,7 +21,7 @@ npx -y doc-lag mcp
 npx -y -p doc-lag doc-lag-mcp
 ```
 
-Docs in scope by default: root `README`/`AGENTS`/`CLAUDE`/`CONTRIBUTING`, `docs/**`, common site/monorepo paths, `.md` + `.mdx`. Configure with `doc-lag.config.json` or `--docs-include` / `--docs-exclude`. Planned: OpenAPI/Swagger and reStructuredText support.
+Docs in scope by default: root `README`/`AGENTS`/`CLAUDE`/`CONTRIBUTING`, `docs/**`, `**/README.md` (nested package/server READMEs), common site/monorepo paths, `.md` + `.mdx`. Configure with `doc-lag.config.json` or `--docs-include` / `--docs-exclude`. Planned: OpenAPI/Swagger and reStructuredText support.
 
 Optional docs-sync (`docs.missing`, **since 0.4.0**): off by default; enable with `docsSync` in config or `--docs-sync` / Action `docs-sync` / MCP `docs_sync`. Pairing rules plus detectors for Action inputs/outputs, package bins, CLI flags/commands (commander/argparse/click), MCP tools, and opt-in `env.added` / `cli.argv` (hand-rolled argv). Common English names need structured doc mentions (inline code, table, or YAML key). Skip with commit trailer `Docs-Not-Needed: <reason>` or the `no-docs-needed` PR label (Action reads labels from the event; use `labeled`/`unlabeled` workflow types). Agents: prefer `scan_diff` with `docs_sync: true` before finishing and follow the Action items block.
 

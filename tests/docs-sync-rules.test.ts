@@ -201,7 +201,7 @@ describe("docs-sync pairing rules", () => {
       ],
     });
     const report = scan({ cwd: fixture.repo, base: fixture.base, head: fixture.head });
-    // Also excluded by DEFAULT_CODE_EXCLUDE **/*.test.* — either way, 0.
+    // Also excluded by default docsSync.ignore **/*.test.* — either way, 0.
     expect(report.findings.filter((f) => f.ruleId === "docs.missing")).toHaveLength(0);
   });
 

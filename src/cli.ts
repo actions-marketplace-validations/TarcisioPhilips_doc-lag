@@ -180,9 +180,9 @@ Config:
   DOC_LAG_DOCS_SYNC_ENFORCE=true|false  enforce docs.missing when the flag is omitted
 
 Docs discovery defaults cover root README/AGENTS/CLAUDE/CONTRIBUTING, docs/**,
-website/docs, apps/docs, packages/*/README, content/** (md+mdx). See README
+website/docs, apps/docs, **/README.md, content/** (md+mdx). See README
 "What counts as documentation". Docs-sync is off by default; enable with
-docsSync in config or --docs-sync.
+docsSync in config or --docs-sync (default ignore: scripts/examples/tests).
 `,
     )
     .action(

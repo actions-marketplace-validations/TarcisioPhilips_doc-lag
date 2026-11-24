@@ -35,9 +35,9 @@ export const DEFAULT_DOCS_INCLUDE: readonly string[] = [
   "website/docs/**/*.{md,mdx}",
   "website/src/pages/**/*.{md,mdx}",
   "apps/docs/**/*.{md,mdx}",
-  "packages/*/README.md",
+  // Nested package/server READMEs (monorepos, MCP servers, src/*/README.md)
+  "**/README.md",
   "packages/*/docs/**/*.{md,mdx}",
-  "apps/*/README.md",
   "content/**/*.{md,mdx}",
 ];
 

@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { parseDocLagConfig } from "../src/core/docs-config.js";
 import {
   DEFAULT_CODE_EXCLUDE,
+  DEFAULT_DOCS_SYNC_IGNORE,
   DEFAULT_DOCS_SYNC_SKIP_LABELS,
   DEFAULT_DOCS_SYNC_SKIP_TRAILER,
   DEFAULT_MAX_FINDINGS,
@@ -39,7 +40,7 @@ describe("createDefaultDocsSyncConfig", () => {
     expect(defaults.enforce).toBe(false);
     expect(defaults.skipLabels).toEqual([...DEFAULT_DOCS_SYNC_SKIP_LABELS]);
     expect(defaults.skipTrailer).toBe(DEFAULT_DOCS_SYNC_SKIP_TRAILER);
-    expect(defaults.ignore).toEqual([]);
+    expect(defaults.ignore).toEqual([...DEFAULT_DOCS_SYNC_IGNORE]);
     expect(defaults.ignoreSymbols).toEqual([]);
     expect(defaults.rules).toEqual([]);
     expect(defaults.packages).toEqual(["packages/*", "apps/*"]);
@@ -50,7 +51,10 @@ describe("createDefaultDocsSyncConfig", () => {
     expect(defaults.detectors["cli.argv"].enabled).toBe(false);
     expect(defaults.detectors["cli.flag"].enabled).toBe(true);
     expect(DEFAULT_CODE_EXCLUDE).toContain("**/node_modules/**");
-    expect(DEFAULT_CODE_EXCLUDE).toContain("**/*.test.*");
+    expect(DEFAULT_DOCS_SYNC_IGNORE).toContain("**/scripts/**");
+    expect(DEFAULT_DOCS_SYNC_IGNORE).toContain("**/tests/**");
+    expect(DEFAULT_DOCS_SYNC_IGNORE).toContain("**/examples/**");
+    expect(DEFAULT_CODE_EXCLUDE).not.toContain("**/tests/**");
   });
 });
 

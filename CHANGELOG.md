@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Default docs include `**/README.md` (nested package / MCP server / `src/*/README.md`) so monorepo READMEs near changed sources count as documentation
+- Default `docsSync.ignore` skips `scripts/**`, `examples/**`, `tests/**` (and known test/fixture globs) for docs-sync candidates; replace via config `ignore` (hard excludes like `node_modules` / `dist` stay always-on)
+
+### Fixed
+
+- `git cat-file --batch` oneshot overflow on Node 20+ (`ENOBUFS`, not only `ERR_CHILD_PROCESS_STDIO_MAXBUFFER`) now falls back to size-budgeted chunks instead of exiting 2
+
 ## [0.4.0] — 2026-11-23
 
 ### Added

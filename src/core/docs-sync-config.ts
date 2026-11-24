@@ -35,6 +35,7 @@ export const DEFAULT_MAX_FINDINGS = 50;
 export const DEFAULT_PACKAGES: readonly string[] = ["packages/*", "apps/*"];
 
 /** Built-in code excludes always applied to docs-sync candidates. */
+/** Hard excludes (always applied; not cleared by docsSync.ignore). */
 export const DEFAULT_CODE_EXCLUDE: readonly string[] = [
   "**/node_modules/**",
   "**/dist/**",
@@ -44,6 +45,16 @@ export const DEFAULT_CODE_EXCLUDE: readonly string[] = [
   "**/coverage/**",
   "**/vendor/**",
   "**/.venv/**",
+];
+
+/**
+ * Soft path ignores for docs-sync candidates (CLI/MCP noise: scripts, examples,
+ * tests). Default `docsSync.ignore`; replace via config `ignore: []` or a custom list.
+ */
+export const DEFAULT_DOCS_SYNC_IGNORE: readonly string[] = [
+  "**/scripts/**",
+  "**/examples/**",
+  "**/example/**",
   "**/test/**",
   "**/tests/**",
   "**/__tests__/**",
@@ -51,8 +62,6 @@ export const DEFAULT_CODE_EXCLUDE: readonly string[] = [
   "**/*.spec.*",
   "**/fixtures/**",
   "**/__fixtures__/**",
-  "**/examples/**",
-  "**/example/**",
   "**/testdata/**",
 ];
 
@@ -602,7 +611,7 @@ export function createDefaultDocsSyncConfig(): DocsSyncConfig {
     enforce: false,
     skipLabels: [...DEFAULT_DOCS_SYNC_SKIP_LABELS],
     skipTrailer: DEFAULT_DOCS_SYNC_SKIP_TRAILER,
-    ignore: [],
+    ignore: [...DEFAULT_DOCS_SYNC_IGNORE],
     ignoreSymbols: [],
     detectors,
     rules: [],
